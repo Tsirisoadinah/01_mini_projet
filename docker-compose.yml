@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: projet_web
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  backoffice:
+    build: ./backoffice
+    container_name: laravel_app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    env_file:
+      - ./backoffice/.env
+    volumes:
+      - ./backoffice:/var/www/html
+
+  frontoffice:
+    image: php:8.2-apache
+    container_name: php_front
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontoffice:/var/www/html
